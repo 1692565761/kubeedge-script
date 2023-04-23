@@ -306,6 +306,9 @@ spec:
                 operator: In
                 values:
                 - linux
+            - matchExpressions:
+              - key: node-role.kubernetes.io/edge
+                operator: DoesNotExist
       containers:
       - args:
         - --ip-masq
@@ -413,6 +416,9 @@ function check_flannel(){
 
 #编写安装kubeedge函数
 function install_kubeedge(){
+    #此命令用于更新kube-system命名空间中所有daemon set的affinity规范，以确保它们的pod不会被调度到边缘节点上。
+    kubectl get daemonset -n kube-system | grep -v NAME | awk '{print $1}' | xargs -n 1 kubectl patch daemonset -n kube-system --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/affinity", "value":{"nodeAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":{"nodeSelectorTerms":[{"matchExpressions":[{"key":"node-role.kubernetes.io/edge","operator":"DoesNotExist"}]}]}}}}]'
+
     #删除master节点的污点
     kubectl taint nodes mycloud node-role.kubernetes.io/control-plane-
 
@@ -437,7 +443,7 @@ function install_kubeedge(){
 
 #编写等待函数,用来等待函数执行完成
 function wait(){
-    for i in {1..5}
+    for i in {1..8}
     do
         echo -e "\033[34m 等待$i秒 \033[0m"
         sleep 1
@@ -463,7 +469,10 @@ function main(){
     wait
     install_kubeedge 
     echo -e "\033[31m kubeedge安装完成 \033[0m"
-    echo "边缘节点加入命令为：keadm join --cloudcore-ipport=$cloudip:10000 --token=$(keadm gettoken) --kubeedge-version=1.13.0"
+    wait
+    #打印出边缘节点加入命令,并且将边缘节点加入命令打印出来，token通过keadm gettoken获得
+    echo -e "\033[31m 边缘节点加入命令为: \033[0m"
+    echo -e "\033[31m keadm join --cloudcore-ipport=$cloudip:10000 --token=$(keadm gettoken) \033[0m"
 }
 
 #调用主函数
