@@ -302,11 +302,6 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: kubernetes.io/os
-                operator: In
-                values:
-                - linux
-            - matchExpressions:
               - key: node-role.kubernetes.io/edge
                 operator: DoesNotExist
       containers:
