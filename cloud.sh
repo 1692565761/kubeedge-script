@@ -1,7 +1,11 @@
-# kubeedge cloud wangshuzhan
-# kubernetes v1.25 
-# kubeedge v1.13.0
-# centos:7.9
+#作者：王书展
+#时间：2023-04-23
+#版本：1.0
+#环境：CentOS 7.9.2009 , root 用户, 需要国内网和国外网
+#kubernetes版本：1.25.8
+#kubeedgtes容器运行时：containerd
+#kubeedge版本：1.13.0
+
 
 #让用户输入ip地址
 read -p "请输入ip地址：" cloudip
