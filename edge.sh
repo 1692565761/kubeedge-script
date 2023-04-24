@@ -1,9 +1,10 @@
 #作者：王书展
 #时间：2023-04-23
-#版本：1.0
+#版本：1.1
 #环境：CentOS 7.9.2009 , root 用户, 需要国内网和国外网
 #容器运行时：docker
 #kubeedge版本：1.13.0
+#功能：安装kubeedge edge节点
 
 #让用户输入ip地址
 read -p "请输入cloudip地址：" cloudip

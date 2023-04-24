@@ -1,10 +1,11 @@
 #作者：王书展
 #时间：2023-04-23
-#版本：1.0
+#版本：1.1
 #环境：CentOS 7.9.2009 , root 用户, 需要国内网和国外网
 #kubernetes版本：1.25.8
 #kubeedgtes容器运行时：containerd
 #kubeedge版本：1.13.0
+#功能：安装kubeedge cloud节点
 
 
 #让用户输入ip地址
@@ -55,7 +56,7 @@ function system_preparation(){
         /etc/yum.repos.d/CentOS-Base.repo
 
     # 安装必要软件包
-    yum install -y vim bash-completion lrzsz tar wget curl net-tools tee
+    yum install -y vim bash-completion lrzsz tar wget curl net-tools tee git
 }
 
 
