@@ -8,6 +8,9 @@
 #让用户输入ip地址
 read -p "请输入cloudip地址：" cloudip
 
+#让用户输入当前节点的名称
+read -p "请输入当前节点的名称：" nodename
+
 #编写环境检查函数
 function check_system(){
     if [[ ! -f /etc/redhat-release ]] || [[ $(awk '{print $4}' /etc/redhat-release) != "7.9.2009" ]] || [[ $UID -ne 0 ]]; then
@@ -26,12 +29,12 @@ function check_network(){
 
 #编写系统预处理函数
 function system_preparation(){
-    #设置主机名为myedge
-    hostnamectl set-hostname myedge
+    #设置主机名为$nodename
+    hostnamectl set-hostname $nodename
 
     #判断hosts文件中是否包含 myedge 字段 如果包含则不添加
-    if [[ $(cat /etc/hosts | grep myedge) == "" ]]; then
-        echo "$cloudip myedge" >> /etc/hosts
+    if [[ $(cat /etc/hosts | grep $nodename) == "" ]]; then
+        echo "$cloudip $nodename" >> /etc/hosts
     fi
 
     #设置时区为中国上海
@@ -60,17 +63,21 @@ function system_preparation(){
 #安装docker函数
 function install_docker(){
     wget https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo -O /etc/yum.repos.d/docker-ce.repo
+    #修改docker源为ustc
     sed -i 's+download.docker.com+mirrors.ustc.edu.cn/docker-ce+' /etc/yum.repos.d/docker-ce.repo
+    #安装docker
     yum -y install docker-ce
-    #自启
+    #启动docker
     systemctl enable docker
     #设置docker加速器
     mkdir -p /etc/docker
+    #设置daemon
     cat > /etc/docker/daemon.json <<EOF
     {
       "registry-mirrors": ["https://dockerproxy.com"]
     }
 EOF
+    #重载配置
     systemctl daemon-reload
     #重启docker
     systemctl restart docker
@@ -96,9 +103,17 @@ function install_kubeedge(){
     #获取用户输入的token
     read -p "请输入token：" token
 
-    #加入云端,指定运行时为docker
-    keadm join --cloudcore-ipport=$cloudip:10000 --token=$token --runtimetype=docker
+    #加入云端,指定运行时为docker,并且指定kubeedge版本为1.13.0,并且指定云端的ip地址和端口,并且指定token
+    keadm join --cloudcore-ipport=$cloudip:10000 --token=$token --kubeedge-version=1.13.0 --runtimetype=docker
 
+    #修改edgecore配置文件,使edgecore可以访问云端,并且启用edgeStream,这样就可以在云端看到当前节点的状态
+    sed -i '/^  edgeStream:/,/^[^ ]/ s/enable: false/enable: true/' /etc/kubeedge/config/edgecore.yaml 
+
+    #重启edgecore
+    systemctl restart edgecore
+
+    #用红色打印出来安装kubeedge任务已经完成
+    echo -e "\033[31m当前任务已经完成\033[0m"
     fi
 }
 

@@ -467,7 +467,7 @@ function main(){
     wait
     #打印出边缘节点加入命令,并且将边缘节点加入命令打印出来，token通过keadm gettoken获得
     echo -e "\033[31m 边缘节点加入命令为: \033[0m"
-    echo -e "\033[31m keadm join --cloudcore-ipport=$cloudip:10000 --token=$(keadm gettoken) \033[0m"
+    echo -e "\033[31m keadm join --cloudcore-ipport=$cloudip:10000 --profile version=v1.13.0 --token=$(keadm gettoken) \033[0m"
 }
 
 #调用主函数
