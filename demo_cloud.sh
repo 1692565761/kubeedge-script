@@ -34,7 +34,13 @@ metadata:
 spec:
   deviceModelRef:
     name: counter-model
-  nodeName: $nodename
+  nodeSelector:
+    nodeSelectorTerms:
+    - matchExpressions:
+      - key: ''
+        operator: In
+        values:
+        - $nodename
 
 status:
   twins:
@@ -129,7 +135,7 @@ EOF
 kubectl apply -f /root/kubeedge-counter-demo/crds/kubeedge-web-controller-app.yaml
 
 # 重写kubeedge-pi-counter-app.yaml文件
-cat > /root/kubeedge-counter-demo/crds/kubeedge-web-controller-app.yaml <<EOF
+cat > /root/kubeedge-counter-demo/crds/kubeedge-pi-counter-app.yaml <<EOF
 apiVersion: apps/v1
 kind: Deployment
 metadata:
