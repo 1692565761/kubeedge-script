@@ -1,6 +1,6 @@
 #作者：王书展
 #时间：2023-04-23
-#版本：1.1
+#版本：1.2
 #环境：CentOS 7.9.2009 , root 用户, 需要国内网和国外网
 #kubernetes版本：1.25.8
 #kubeedgtes容器运行时：containerd
@@ -433,7 +433,15 @@ function install_kubeedge(){
     #添加执行权限 # 并且将keadm拷贝到/usr/local/bin目录下
     chmod +x keadm-v1.13.0-linux-amd64/keadm/keadm && cp keadm-v1.13.0-linux-amd64/keadm/keadm /usr/local/bin/keadm
     #安装kubeedge
-    keadm init --advertise-address=$cloudip --profile version=v1.13.0
+    keadm deprecated init --advertise-address=$cloudip  --kubeedge-version=1.13.0
+
+    export CLOUDCOREIPS="$cloudip"
+
+    #生成证书和密钥
+    bash /root/certgen.sh genCertAndKey
+
+    #stream 证书
+    bash /root/certgen.sh stream
     fi
 }
 
