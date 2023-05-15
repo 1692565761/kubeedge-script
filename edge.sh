@@ -35,7 +35,11 @@ function system_preparation(){
 
     #判断hosts文件中是否包含 myedge 字段 如果包含则不添加
     if [[ $(cat /etc/hosts | grep $nodename) == "" ]]; then
-        echo "$cloudip $nodename" >> /etc/hosts
+        echo "$cloudip mycloud" >> /etc/hosts
+        #获取hostname -i 的ip地址
+        ip=$(hostname -i)
+        # 添加hosts
+        echo "$ip $nodename" >> /etc/hosts
     fi
 
     #设置时区为中国上海

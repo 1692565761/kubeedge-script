@@ -438,10 +438,14 @@ function install_kubeedge(){
     export CLOUDCOREIPS="$cloudip"
 
     #生成证书和密钥
-    bash /root/certgen.sh genCertAndKey
+    bash /root/certgen.sh genCertAndKey mycloud
 
     #stream 证书
     bash /root/certgen.sh stream
+
+    cp /etc/kubeedge/cloudcore.service /usr/lib/systemd/system/
+    systemctl daemon-reload
+    systemctl enable cloudcore
     fi
 }
 
