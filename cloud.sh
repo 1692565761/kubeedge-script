@@ -438,7 +438,7 @@ function install_kubeedge(){
     export CLOUDCOREIPS="$cloudip"
 
     #生成证书和密钥
-    bash /root/certgen.sh genCertAndKey mycloud
+    bash /root/certgen.sh edgesiteServer -i cloudip
 
     #stream 证书
     bash /root/certgen.sh stream
